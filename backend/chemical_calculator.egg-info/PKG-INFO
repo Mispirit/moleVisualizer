@@ -1,0 +1,25 @@
+Metadata-Version: 2.1
+Name: chemical_calculator
+Version: 0.1.0
+Summary: A backend for the chemical calculator project
+Home-page: https://github.com/your-repo-link
+Author: Your Name
+Author-email: your.email@example.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Requires-Dist: Flask
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scipy
+Requires-Dist: matplotlib
+Requires-Dist: requests
+Requires-Dist: flask_sqlalchemy
+Requires-Dist: pytest
+Requires-Dist: flask-cors
+Requires-Dist: openpyxl
+Requires-Dist: pillow
+Requires-Dist: jsonschema
+Requires-Dist: pyyaml
+Requires-Dist: flask-wtf
+Requires-Dist: Flask-Login
+Requires-Dist: flask-migrate

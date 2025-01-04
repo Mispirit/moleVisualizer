@@ -1,0 +1,16 @@
+Flask
+numpy
+pandas
+scipy
+matplotlib
+requests
+flask_sqlalchemy
+pytest
+flask-cors
+openpyxl
+pillow
+jsonschema
+pyyaml
+flask-wtf
+Flask-Login
+flask-migrate
