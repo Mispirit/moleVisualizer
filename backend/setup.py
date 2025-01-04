@@ -4,6 +4,11 @@ setup(
     name="chemical_calculator",  # Replace with your project name
     version="0.1.0",
     packages=find_packages(),
+    entry_points={
+        "console_scripts": [
+            "chemical_calculator=app:app",  # This will point to the `app` object inside `app.py`
+        ],
+    },
     install_requires=[
     "Flask",  # If you're building a web application
     "numpy",  # For numerical computations (if used in your project)

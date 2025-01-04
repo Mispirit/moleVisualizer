@@ -1,7 +1,10 @@
+MANIFEST.in
+app.py
 pyproject.toml
 setup.py
 chemical_calculator.egg-info/PKG-INFO
 chemical_calculator.egg-info/SOURCES.txt
 chemical_calculator.egg-info/dependency_links.txt
+chemical_calculator.egg-info/entry_points.txt
 chemical_calculator.egg-info/requires.txt
 chemical_calculator.egg-info/top_level.txt
