@@ -1,0 +1,30 @@
+body {
+  color: black;
+}
+
+h1 {
+  color: rgb(2, 2, 100);
+  font-weight: bold;
+}
+
+.listyle li{
+margin-bottom: 15px;
+}
+
+.listed li{
+ font-size: 14px;
+}
+
+.listed ul{
+padding: 10px;
+}
+
+.h2font{
+margin-bottom: 20px;
+}
+
+.instructionwlc{
+  font-size: 14px;
+  line-height: 1.2;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
