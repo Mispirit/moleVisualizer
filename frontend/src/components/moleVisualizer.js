@@ -7,53 +7,49 @@ import Footer from "./footer";
 import { IconButton, CircularProgress } from "@mui/material";
 import { Search, Clear } from "@mui/icons-material";
 
-function MoleVisualizer() {
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Read API URL from .env
+
+function Molevisualizer() {
   const [smiles, setSmiles] = useState("");
   const [properties, setProperties] = useState(null);
   const [error, setError] = useState("");
   const [mol2D, setMol2D] = useState("");
   const [compoundData, setCompoundData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false); // Toggle between Search and Clear button
+  const [isSearching, setIsSearching] = useState(false);
 
-  const mol3DRef = useRef(null); // Reference to the 3Dmol viewer container
-  const [viewer, setViewer] = useState(null); // To store the viewer instance
+  const mol3DRef = useRef(null);
+  const [viewer, setViewer] = useState(null);
 
   // Fetch compound name
   const fetchCompoundName = async () => {
-    setLoading(true); // Set loading to true when fetching data
+    setLoading(true);
     try {
       const response = await fetch(
         `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${smiles}/property/IUPACName/JSON`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch compound data.");
-      }
+      if (!response.ok) throw new Error("Failed to fetch compound data.");
+      
       const data = await response.json();
       const name = data?.PropertyTable?.Properties?.[0]?.IUPACName;
-      if (!name) {
-        throw new Error("Invalid compound data structure.");
-      }
+      if (!name) throw new Error("Invalid compound data structure.");
+      
       setCompoundData({ name });
     } catch (error) {
       console.error("Error fetching compound name:", error);
       alert("Failed to fetch compound name!");
     } finally {
-      setLoading(false); // Set loading to false once data is fetched or fails
+      setLoading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Prevent submitting if input is empty
     if (!smiles) return;
 
-    setIsSearching(true); // Change button to "Clear" after searching
+    setIsSearching(true);
     try {
-      const response = await axios.post("http://localhost:5001/api/calculate", {
-        smiles,
-      });
+      const response = await axios.post(`${API_BASE_URL}/api/calculate`, { smiles });
       setProperties(response.data);
       setError("");
 
@@ -62,7 +58,7 @@ function MoleVisualizer() {
 
       // Fetch 2D structure image
       const image2D = await axios.post(
-        "http://localhost:5001/api/render2d",
+        `${API_BASE_URL}/api/render2d`,
         { smiles },
         { responseType: "blob" }
       );
@@ -71,15 +67,7 @@ function MoleVisualizer() {
       // Render 3D structure
       render3D(smiles);
     } catch (err) {
-      if (err.response) {
-        setError("Error calculating properties: " + err.response.data.error);
-      } else if (err.request) {
-        setError(
-          "No response from server. Please check if the backend is running."
-        );
-      } else {
-        setError("An unexpected error occurred: " + err.message);
-      }
+      setError(err.response?.data?.error || "An error occurred");
       setProperties(null);
     }
   };
@@ -91,7 +79,6 @@ function MoleVisualizer() {
         backgroundColor: "white",
       });
 
-      // Store the viewer instance
       setViewer(viewerInstance);
 
       axios
@@ -101,9 +88,8 @@ function MoleVisualizer() {
           )}/sdf`
         )
         .then((res) => {
-          if (!res.data) {
-            throw new Error("Empty SDF data received.");
-          }
+          if (!res.data) throw new Error("Empty SDF data received.");
+          
           viewerInstance.addModel(res.data, "sdf");
           viewerInstance.setStyle({}, { stick: { radius: 0.2 }, sphere: { scale: 0.3 } });
           viewerInstance.zoomTo();
@@ -116,17 +102,15 @@ function MoleVisualizer() {
     }
   };
 
-  // Clear function to reset the state
+  // Clear function
   const clear = () => {
-    setSmiles(""); // Clear the input
-    setProperties(null); // Clear properties
-    setMol2D(""); // Clear 2D structure
-    setCompoundData(null); // Clear compound name
-    setError(""); // Clear error message
-    setIsSearching(false); // Reset to show the Search button
-    if (viewer) {
-      viewer.clear(); // Clear the 3Dmol viewer
-    }
+    setSmiles("");
+    setProperties(null);
+    setMol2D("");
+    setCompoundData(null);
+    setError("");
+    setIsSearching(false);
+    if (viewer) viewer.clear();
   };
 
   return (
@@ -140,16 +124,12 @@ function MoleVisualizer() {
             onChange={(e) => setSmiles(e.target.value)}
             placeholder="Enter SMILE STRING e.g., C1CCCCC1"
             className="w-[90%] text-black focus:outline-none focus:ring-0"
-            disabled={isSearching} // Disable input during search
+            disabled={isSearching}
           />
           <IconButton
             onClick={isSearching ? clear : handleSubmit}
-            disabled={isSearching && !smiles} // Disable button if searching is not in progress
-            style={{
-              backgroundColor: "#007bff", 
-              color: "white", 
-              marginLeft: "10px",
-            }}
+            disabled={isSearching && !smiles}
+            style={{ backgroundColor: "#007bff", color: "white", marginLeft: "10px" }}
           >
             {isSearching ? <Clear /> : <Search />}
           </IconButton>
@@ -191,31 +171,13 @@ function MoleVisualizer() {
                 <br />
                 <p className="text-2xl font-bold pb-[10px]">Properties:</p>
                 <ul className="listyle">
-                  <li>
-                    <strong>Molecular Weight:</strong>{" "}
-                    {properties.molecular_weight}
-                  </li>
-                  <li>
-                    <strong>LogP:</strong> {properties.logP}
-                  </li>
-                  <li>
-                    <strong>TPSA:</strong> {properties.TPSA}
-                  </li>
-                  <li>
-                    <strong>Hydrogen Bond Acceptors:</strong>{" "}
-                    {properties.num_h_acceptors}
-                  </li>
-                  <li>
-                    <strong>Hydrogen Bond Donors:</strong>{" "}
-                    {properties.num_h_donors}
-                  </li>
-                  <li>
-                    <strong>Rotatable Bonds:</strong>{" "}
-                    {properties.num_rotatable_bonds}
-                  </li>
-                  <li>
-                    <strong>Molecular Formula:</strong> {properties.formula}
-                  </li>
+                  <li><strong>Molecular Weight:</strong> {properties.molecular_weight}</li>
+                  <li><strong>LogP:</strong> {properties.logP}</li>
+                  <li><strong>TPSA:</strong> {properties.TPSA}</li>
+                  <li><strong>Hydrogen Bond Acceptors:</strong> {properties.num_h_acceptors}</li>
+                  <li><strong>Hydrogen Bond Donors:</strong> {properties.num_h_donors}</li>
+                  <li><strong>Rotatable Bonds:</strong> {properties.num_rotatable_bonds}</li>
+                  <li><strong>Molecular Formula:</strong> {properties.formula}</li>
                 </ul>
               </div>
             </div>
@@ -230,4 +192,4 @@ function MoleVisualizer() {
   );
 }
 
-export default MoleVisualizer;
+export default Molevisualizer;
