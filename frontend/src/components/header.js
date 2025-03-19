@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+?import React, { useState } from "react";
 import axios from "axios";
 import * as $3Dmol from "3dmol"; // Import 3Dmol.js for 3D visualization
 import Mollogo from "../images/mollogo.png";
@@ -20,7 +20,7 @@ function head() {
 
       {/* About Web*/}
 <h1 className="text-white text-center text-3xl lg:text-4xl font-bold leading-[2.5rem]"> 2D/3D Chemical Structure <br/> Visualizer and Properties Tool</h1>
-    </div>
+   <p> Please hold on for 30 Secs</p> </div>
   );
 }
 
