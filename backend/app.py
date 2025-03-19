@@ -12,10 +12,10 @@ load_dotenv()
 
 # Get configuration from environment variables
 FLASK_ENV = os.getenv("FLASK_ENV", "development")
-FLASK_PORT = int(os.getenv("FLASK_RUN_PORT", 5001))
+FLASK_PORT = int(os.getenv("PORT", 5000))  # Render assigns this automatically
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://elizabethmolevisualizer.netlify.app"])  # Allow frontend requests
 
 # Function to calculate chemical properties
 def calculate_properties(smiles):
@@ -71,4 +71,4 @@ def render2d():
 
 # Start the app using environment variables
 if __name__ == "__main__":
-    app.run(debug=(FLASK_ENV == "development"), port=FLASK_PORT)
+    app.run(debug=(FLASK_ENV == "development"), port=FLASK_PORT, host="0.0.0.0")
